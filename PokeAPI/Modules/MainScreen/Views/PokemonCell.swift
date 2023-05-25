@@ -15,7 +15,7 @@ struct PokemonCell: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10.0)
-                .foregroundColor(Color("back-\(pokemonDetail.types.first!.type.name)"))
+                .foregroundColor(Color("back-\(pokemonDetail.types.first!.type?.name ?? "")"))
                 .frame(height: 115)
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
@@ -38,7 +38,7 @@ struct PokemonCell: View {
                 }
                 .padding([.leading], 20)
                 
-                KFImage(AppUtils.getURL(image: pokemonDetail.sprites.other.officialArtwork.frontDefault))
+                KFImage(AppUtils.getURL(image: pokemonDetail.sprites?.other?.officialArtwork?.frontDefault ?? ""))
                     .resizable()
                     .scaledToFit()
                     .frame(width: 130, height: 130)

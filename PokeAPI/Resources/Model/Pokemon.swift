@@ -6,36 +6,47 @@
 //
 
 import Foundation
+import RealmSwift
 
 // MARK: - Welcome
-struct PokemonResult: Codable {
-    let count: Int
-    let next: String
-    let pokemons: [Pokemon]
+class PokemonResult: Object, Codable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var count: Int = 0
+    @objc dynamic var next: String = ""
+    var pokemons = List<Pokemon>()
     
     enum CodingKeys: String, CodingKey {
         case count
         case next
         case pokemons = "results"
     }
+     
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
 }
 
 // MARK: - Result
-struct Pokemon: Codable, Identifiable {
-    let name: String
-    let url: String
-    let id: String = UUID().uuidString
+class Pokemon: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var name: String = ""
+    @objc dynamic var url: String = ""
     
-    var computedId: Int? {
+    enum CodingKeys: String, CodingKey {
+        case name
+        case url
+    }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    func getComputedId() -> Int? {
         guard let numberString = url.split(separator: "/").last else {
             return nil
         }
         
         return Int(numberString)
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case name
-        case url
     }
 }

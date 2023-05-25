@@ -6,27 +6,29 @@
 //
 
 import Foundation
+import RealmSwift
 
 // MARK: - PokemonDetail
-struct PokemonDetail: Codable, Identifiable {
-    let abilities: [Ability]
-    let baseExperience: Int
-    let forms: [Species]
-    let gameIndices: [GameIndices]
-    let height: Int
-    let heldItems: [HeldItem]
-    let id: Int
-    let isDefault: Bool
-    let locationAreaEncounters: String
-    let moves: [Move]
-    let name: String
-    let order: Int
-    let pastTypes: [String]
-    let species: Species
-    let sprites: Sprites
-    let stats: [Stat]
-    let types: [TypeElement]
-    let weight: Int
+class PokemonDetail: Object, Codable, Identifiable {
+    @objc dynamic var localId = UUID().uuidString
+    var abilities = List<Ability>()
+    @objc dynamic var baseExperience: Int = 0
+    var forms = List<Species>()
+    var gameIndices = List<GameIndices>()
+    @objc dynamic var height: Int = 0
+    var heldItems = List<HeldItem>()
+    @objc dynamic var id: Int = 0
+    @objc dynamic var isDefault: Bool = false
+    @objc dynamic var locationAreaEncounters: String = ""
+    var moves = List<Move>()
+    @objc dynamic var name: String = ""
+    @objc dynamic var order: Int = 0
+    var pastTypes = List<String>()
+    @objc dynamic var species: Species?
+    @objc dynamic var sprites: Sprites?
+    var stats = List<Stat>()
+    var types = List<TypeElement>()
+    @objc dynamic var weight: Int = 0
 
     enum CodingKeys: String, CodingKey {
         case abilities
@@ -48,12 +50,17 @@ struct PokemonDetail: Codable, Identifiable {
         case types
         case weight
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
+    
 }
 
 // MARK: - HeldItem
-struct HeldItem: Codable {
-    let item: Species
-    let versionDetails: [VersionDetail]
+class HeldItem: Object, Codable {
+    @objc dynamic var item: Species?
+    var versionDetails = List<VersionDetail>()
 
     enum CodingKeys: String, CodingKey {
         case item
@@ -62,9 +69,9 @@ struct HeldItem: Codable {
 }
 
 // MARK: - VersionDetail
-struct VersionDetail: Codable {
-    let rarity: Int
-    let version: Species
+class VersionDetail: Object, Codable {
+    @objc dynamic var rarity: Int = 0
+    @objc dynamic var version: Species?
 
     enum CodingKeys: String, CodingKey {
         case rarity
@@ -73,76 +80,102 @@ struct VersionDetail: Codable {
 }
 
 // MARK: - Ability
-struct Ability: Codable, Identifiable {
-    let id = UUID().uuidString
-    let ability: Species
-    let isHidden: Bool
-    let slot: Int
+class Ability: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var ability: Species?
+    @objc dynamic var isHidden: Bool = false
+    @objc dynamic var slot: Int = 0
 
     enum CodingKeys: String, CodingKey {
         case ability
         case isHidden = "is_hidden"
         case slot
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
 }
 
 // MARK: - Species
-struct Species: Codable {
-    let name: String
-    let url: String
+class Species: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var name: String = ""
+    @objc dynamic var url: String = ""
 
     enum CodingKeys: String, CodingKey {
         case name
         case url
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - GameIndex
-struct GameIndices: Codable {
-    let gameIndex: Int
-    let version: Species
+class GameIndices: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var gameIndex: Int = 0
+    @objc dynamic var version: Species?
 
     enum CodingKeys: String, CodingKey {
         case gameIndex = "game_index"
         case version
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - Move
-struct Move: Codable {
-    let move: Species
-    let versionGroupDetails: [VersionGroupDetail]
+class Move: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var move: Species?
+    var versionGroupDetails = List<VersionGroupDetail>()
 
     enum CodingKeys: String, CodingKey {
         case move
         case versionGroupDetails = "version_group_details"
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - VersionGroupDetail
-struct VersionGroupDetail: Codable {
-    let levelLearnedAt: Int
-    let moveLearnMethod: Species
-    let versionGroup: Species
+class VersionGroupDetail: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var levelLearnedAt: Int = 0
+    @objc dynamic var moveLearnMethod: Species?
+    @objc dynamic var versionGroup: Species?
 
     enum CodingKeys: String, CodingKey {
         case levelLearnedAt = "level_learned_at"
         case moveLearnMethod = "move_learn_method"
         case versionGroup = "version_group"
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - Sprites
-struct Sprites: Codable {
-    let backDefault: String
-    let backFemale: String?
-    let backShiny: String
-    let backShinyFemale: String?
-    let frontDefault: String
-    let frontFemale: String?
-    let frontShiny: String
-    let frontShinyFemale: String?
-    let other: Other
+class Sprites: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var backDefault: String = ""
+    @objc dynamic var backFemale: String? = ""
+    @objc dynamic var backShiny: String = ""
+    @objc dynamic var backShinyFemale: String? = ""
+    @objc dynamic var frontDefault: String = ""
+    @objc dynamic var frontFemale: String? = ""
+    @objc dynamic var frontShiny: String = ""
+    @objc dynamic var frontShinyFemale: String? = ""
+    @objc dynamic var other: Other?
 
     enum CodingKeys: String, CodingKey {
         case backDefault = "back_default"
@@ -155,63 +188,90 @@ struct Sprites: Codable {
         case frontShinyFemale = "front_shiny_female"
         case other
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - Other
-struct Other: Codable {
-    let dreamWorld: DreamWorld
-    let officialArtwork: OfficialArtwork
+class Other: Object, Codable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var dreamWorld: DreamWorld?
+    @objc dynamic var officialArtwork: OfficialArtwork?
 
     enum CodingKeys: String, CodingKey {
         case dreamWorld = "dream_world"
         case officialArtwork = "official-artwork"
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - DreamWorld
-struct DreamWorld: Codable {
-    let frontDefault: String
-    let frontFemale: String?
+class DreamWorld: Object, Codable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var frontDefault: String = ""
+    @objc dynamic var frontFemale: String? = ""
 
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"
         case frontFemale = "front_female"
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - OfficialArtwork
-struct OfficialArtwork: Codable {
-    let frontDefault: String
-    let frontShiny: String
+class OfficialArtwork: Object, Codable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var frontDefault: String = ""
+    @objc dynamic var frontShiny: String = ""
 
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"
         case frontShiny = "front_shiny"
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - Stat
-struct Stat: Codable, Identifiable {
-    let id = UUID().uuidString
-    let baseStat: Int
-    let effort: Int
-    let stat: Species
+class Stat: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var baseStat: Int = 0
+    @objc dynamic var effort: Int = 0
+    @objc dynamic var stat: Species?
 
     enum CodingKeys: String, CodingKey {
         case baseStat = "base_stat"
         case effort
         case stat
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 // MARK: - TypeElement
-struct TypeElement: Codable, Identifiable {
-    let id = UUID().uuidString
-    let slot: Int
-    let type: Species
+class TypeElement: Object, Codable, Identifiable {
+    @objc dynamic var id = UUID().uuidString
+    @objc dynamic var slot: Int = 0
+    @objc dynamic var type: Species?
 
     enum CodingKeys: String, CodingKey {
         case slot
         case type
+    }
+    
+    override class func primaryKey() -> String? {
+        return "id"
     }
 }

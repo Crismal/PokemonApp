@@ -31,7 +31,7 @@ struct PokemonDetailView: View {
                 .frame(maxWidth: .infinity)
                 .mask(TopRoundedRectangle(radius: 40))
             }
-            .background(Color("back-\(pokemonDetail.types.first!.type.name)"))
+            .background(Color("back-\(pokemonDetail.types.first!.type?.name ?? "")"))
             .edgesIgnoringSafeArea(.all)
             .frame(maxWidth: .infinity, alignment: .leading)
         }

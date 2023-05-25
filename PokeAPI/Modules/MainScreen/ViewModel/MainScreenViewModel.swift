@@ -38,7 +38,7 @@ class MainScreenViewModel: ObservableObject {
     private func getDetails() {
         guard let pokemons = pokemonResult?.pokemons else { return }
         for pokemon in pokemons {
-            if let id = pokemon.computedId {
+            if let id = pokemon.getComputedId() {
                 if !pokemonDetail.contains(where: { $0.id == id }) {
                     getPokemonDetail(pokemonId: id)
                 }

@@ -18,7 +18,7 @@ struct PokedexDataView: View {
                 .font(.system(size: 16))
                 .fontWeight(.bold)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundColor(Color(pokemonDetail.types.first!.type.name))
+                .foregroundColor(Color(pokemonDetail.types.first!.type?.name ?? ""))
             if let pokemonSpecie = pokemonSpecie {
                 HStack(spacing: 10) {
                     Text("Species")
@@ -62,7 +62,7 @@ struct PokedexDataView: View {
                     .fontWeight(.medium)
                     .frame(maxWidth: 85, alignment: .leading)
                 ForEach(pokemonDetail.abilities) { ability in
-                    Text(ability.ability.name)
+                    Text(ability.ability?.name ?? "")
                         .font(.system(size: 16))
                         .fontWeight(.regular)
                         .frame(maxWidth: .infinity, alignment: .leading)

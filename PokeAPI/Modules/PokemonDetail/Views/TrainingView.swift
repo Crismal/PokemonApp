@@ -17,7 +17,7 @@ struct TrainingView: View {
                 .font(.system(size: 16))
                 .fontWeight(.bold)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundColor(Color(pokemonDetail.types.first!.type.name))
+                .foregroundColor(Color(pokemonDetail.types.first!.type?.name ?? ""))
             HStack(spacing: 10) {
                 Text("EV Yield")
                     .font(.system(size: 12))
