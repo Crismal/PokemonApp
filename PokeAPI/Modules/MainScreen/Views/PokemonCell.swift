@@ -13,11 +13,21 @@ struct PokemonCell: View {
     var pokemonRegion: String
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomLeading) {
             RoundedRectangle(cornerRadius: 10.0)
                 .foregroundColor(Color("back-\(pokemonDetail.types.first!.type?.name ?? "")"))
                 .frame(height: 115)
-            HStack {
+            Image("Pattern")
+                .resizable()
+                .frame(width: 74, height: 32, alignment: .topLeading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding([.leading], 90)
+                .padding([.bottom], 78)
+            Image("Pokeball")
+                .resizable()
+                .frame(width: 115, height: 115, alignment: .topLeading)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+            HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 5) {
                     HStack {
                         Text(AppUtils.convertToPaddedString(number: pokemonDetail.id, padding: 3))
@@ -37,13 +47,18 @@ struct PokemonCell: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding([.leading], 20)
-                
-                KFImage(AppUtils.getURL(image: pokemonDetail.sprites?.other?.officialArtwork?.frontDefault ?? ""))
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 130, height: 130)
-                    .padding(.bottom, 10)
+                VStack() {
+                    KFImage(AppUtils.getURL(image: pokemonDetail.sprites?.other?.officialArtwork?.frontDefault ?? ""))
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 130, height: 130)
+                }
+                .padding([.trailing], 10)
+                .padding([.bottom], 15)
+                .frame(width: 130, height: 130)
             }
         }
+        .frame(height: 130)
+        .padding([.top, .bottom], 20)
     }
 }

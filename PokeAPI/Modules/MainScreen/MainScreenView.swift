@@ -45,7 +45,6 @@ struct MainScreenView: View {
                             .frame(width: geometry.size.width - 40, alignment: .leading)
                             .padding(.leading, 0)
                             .listRowInsets(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                           
                     }
                     .listStyle(GroupedListStyle())
                     .environment(\.horizontalSizeClass, .regular)

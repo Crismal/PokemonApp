@@ -20,7 +20,7 @@ class PokemonResult: Object, Codable {
         case next
         case pokemons = "results"
     }
-     
+    
     override class func primaryKey() -> String? {
         return "id"
     }
