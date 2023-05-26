@@ -6,18 +6,20 @@
 //
 
 import Foundation
+import RealmSwift
 
 // MARK: - PokemonGeneration
-struct PokemonGeneration: Codable {
-    let abilities: [PokemonColor]
-    let id: Int
-    let mainRegion: PokemonColor
-    let moves: [PokemonColor]
-    let name: String
-    let names: [GenerationName]
-    let pokemonSpecies: [PokemonColor]
-    let types: [PokemonColor]
-    let versionGroups: [PokemonColor]
+class PokemonGeneration: Object, Codable {
+    @objc dynamic var localId: String = UUID().uuidString
+    var abilities = List<PokemonColor>()
+    @objc dynamic var id: Int = 0
+    @objc dynamic var mainRegion: PokemonColor?
+    var moves = List<PokemonColor>()
+    @objc dynamic var name: String = ""
+    var names = List<GenerationName>()
+    var pokemonSpecies = List<PokemonColor>()
+    var types = List<PokemonColor>()
+    var versionGroups = List<PokemonColor>()
 
     enum CodingKeys: String, CodingKey {
         case abilities
@@ -30,15 +32,24 @@ struct PokemonGeneration: Codable {
         case types
         case versionGroups = "version_groups"
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
 }
 
 // MARK: - Name
-struct GenerationName: Codable {
-    let language: PokemonColor
-    let name: String
+class GenerationName: Object, Codable {
+    @objc dynamic var localId: String = UUID().uuidString
+    @objc dynamic var language: PokemonColor?
+    @objc dynamic var name: String = ""
 
     enum CodingKeys: String, CodingKey {
         case language
         case name
+    }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
     }
 }

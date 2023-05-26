@@ -55,7 +55,7 @@ class RealmDataManager {
         guard let realm = getRealmInstance() else { return nil }
         return realm.object(ofType: objectType, forPrimaryKey: primaryKey)
     }
-     
+    
     func getAllObjects<T: Object>(_ objectType: T.Type) -> Results<T>? {
         guard let realm = getRealmInstance() else { return nil }
         return realm.objects(objectType)

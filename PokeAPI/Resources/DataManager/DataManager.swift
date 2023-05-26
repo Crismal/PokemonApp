@@ -45,9 +45,9 @@ class DataManager {
     }
     
     func getPokemonDetail(pokemonId: Int, _ completion: @escaping (Result<PokemonDetail, Error>) -> Void) {
-//        if let pokemons = realm.getObject(PokemonDetail.self, primaryKey: "\(pokemonId)") {
-//            completion(.success(pokemons))
-//        } else {
+        if let pokemonDetail = realm.getAllObjects(PokemonDetail.self)?.where( { $0.id == pokemonId}).first {
+            completion(.success(pokemonDetail))
+        } else {
             service.request(endPoint: "pokemon/\(pokemonId)", method: .get) { (result: Result<PokemonDetail, Error>) in
                 switch result {
                 case .success(let success):
@@ -58,30 +58,39 @@ class DataManager {
                     completion(.failure(failure))
                 }
             }
-//        }
-      
+        }
     }
     
     func getPokemonSpecies(pokemonId: Int, _ completion: @escaping (Result<PokemonSpecie, Error>) -> Void) {
-        service.request(endPoint: "pokemon-species/\(pokemonId)", method: .get) { (result: Result<PokemonSpecie, Error>) in
-            switch result {
-            case .success(let success):
-                completion(.success(success))
-            case .failure(let failure):
-                print(failure)
-                completion(.failure(failure))
+        if let pokemonSpecie = realm.getAllObjects(PokemonSpecie.self)?.where( { $0.id == pokemonId}).first {
+            completion(.success(pokemonSpecie))
+        } else {
+            service.request(endPoint: "pokemon-species/\(pokemonId)", method: .get) { (result: Result<PokemonSpecie, Error>) in
+                switch result {
+                case .success(let success):
+                    self.saveObject(object: success)
+                    completion(.success(success))
+                case .failure(let failure):
+                    print(failure)
+                    completion(.failure(failure))
+                }
             }
         }
     }
     
     func getPokemonGeneration(generationId: Int, _ completion: @escaping (Result<PokemonGeneration, Error>) -> Void) {
-        service.request(endPoint: "generation/\(generationId)", method: .get) { (result: Result<PokemonGeneration, Error>) in
-            switch result {
-            case .success(let success):
-                completion(.success(success))
-            case .failure(let failure):
-                print(failure)
-                completion(.failure(failure))
+        if let pokemonGeneration = realm.getAllObjects(PokemonGeneration.self)?.where( { $0.id == generationId}).first {
+            completion(.success(pokemonGeneration))
+        } else {
+            service.request(endPoint: "generation/\(generationId)", method: .get) { (result: Result<PokemonGeneration, Error>) in
+                switch result {
+                case .success(let success):
+                    self.saveObject(object: success)
+                    completion(.success(success))
+                case .failure(let failure):
+                    print(failure)
+                    completion(.failure(failure))
+                }
             }
         }
     }
@@ -91,7 +100,7 @@ class DataManager {
 
 extension DataManager {
     
-    func saveObject<T: Object>(object: T) {
+    func saveObject<T: RealmSwift.Object>(object: T) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.realm.saveObject(object)

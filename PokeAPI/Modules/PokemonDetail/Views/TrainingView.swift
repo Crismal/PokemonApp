@@ -73,7 +73,7 @@ struct TrainingView: View {
                         .font(.system(size: 12))
                         .fontWeight(.medium)
                         .frame(maxWidth: 85, alignment: .leading)
-                    Text("\(pokemonSpecie.growthRate.name)")
+                    Text("\(pokemonSpecie.growthRate?.name ?? "")")
                         .font(.system(size: 16))
                         .fontWeight(.regular)
                         .frame(maxWidth: .infinity, alignment: .leading)

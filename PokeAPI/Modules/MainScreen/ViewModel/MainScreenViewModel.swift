@@ -80,8 +80,8 @@ class MainScreenViewModel: ObservableObject {
     
     func getGenerations() {
         for specie in pokemonSpecie {
-            if !pokemonGeneration.contains(where: { $0.id == specie.generation.computedId }) {
-                if let id = specie.generation.computedId {
+            if !pokemonGeneration.contains(where: { $0.id == specie.generation?.getComputedId() }) {
+                if let id = specie.generation?.getComputedId() {
                     getPokemonGeneration(generationId: id)
                 }
             }
@@ -113,8 +113,8 @@ class MainScreenViewModel: ObservableObject {
     
     func getPokemonRegion(pokemonId: Int) -> String {
         if let pokemonSpecie = pokemonSpecie.first(where: { $0.id == pokemonId }) {
-            if let generation = pokemonGeneration.first(where: { $0.id == pokemonSpecie.generation.computedId }) {
-                return generation.mainRegion.name
+            if let generation = pokemonGeneration.first(where: { $0.id == pokemonSpecie.generation?.getComputedId() }) {
+                return generation.mainRegion?.name ?? ""
             }
         }
         return ""

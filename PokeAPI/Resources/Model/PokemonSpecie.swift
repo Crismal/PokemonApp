@@ -6,37 +6,39 @@
 //
 
 import Foundation
+import RealmSwift
 
 // MARK: - PokemonSpecie
-struct PokemonSpecie: Codable {
-    let baseHappiness: Int
-    let captureRate: Int
-    let color: PokemonColor
-    let eggGroups: [PokemonColor]
-    let evolutionChain: EvolutionChain
-    let evolvesFromSpecies: PokemonColor?
-    let flavorTextEntries: [FlavorTextEntry]
-    let formDescriptions: [String]
-    let formsSwitchable: Bool
-    let genderRate: Int
-    let genera: [Genus]
-    let generation: Generation
-    let growthRate: PokemonColor
-    let habitat: PokemonColor
-    let hasGenderDifferences: Bool
-    let hatchCounter: Int
-    let id: Int
-    let isBaby: Bool
-    let isLegendary: Bool
-    let isMythical: Bool?
-    let name: String
-    let names: [Name]
-    let order: Int
-    let palParkEncounters: [PalParkEncounter]
-    let pokedexNumbers: [PokedexNumber]
-    let shape: PokemonColor
-    let varieties: [Variety]
-
+class PokemonSpecie: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var baseHappiness: Int = 0
+    @objc dynamic var captureRate: Int = 0
+    @objc dynamic var color: PokemonColor?
+    var eggGroups = List<PokemonColor>()
+    @objc dynamic var evolutionChain: EvolutionChain?
+    @objc dynamic var evolvesFromSpecies: PokemonColor?
+    var flavorTextEntries = List<FlavorTextEntry>()
+    var formDescriptions = List<String>()
+    @objc dynamic var formsSwitchable: Bool = false
+    @objc dynamic var genderRate: Int = 0
+    var genera = List<Genus>()
+    @objc dynamic var generation: Generation?
+    @objc dynamic var growthRate: PokemonColor?
+    @objc dynamic var habitat: PokemonColor?
+    @objc dynamic var hasGenderDifferences: Bool = false
+    @objc dynamic var hatchCounter: Int = 0
+    @objc dynamic var id: Int = 0
+    @objc dynamic var isBaby: Bool = false
+    @objc dynamic var isLegendary: Bool = false
+    @objc dynamic var isMythical: Bool = false
+    @objc dynamic var name: String = ""
+    var names = List<Name>()
+    @objc dynamic var order: Int = 0
+    var palParkEncounters = List<PalParkEncounter>()
+    var pokedexNumbers = List<PokedexNumber>()
+    @objc dynamic var shape: PokemonColor?
+    var varieties = List<Variety>()
+    
     enum CodingKeys: String, CodingKey {
         case baseHappiness = "base_happiness"
         case captureRate = "capture_rate"
@@ -66,13 +68,24 @@ struct PokemonSpecie: Codable {
         case shape
         case varieties
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
 }
 
 // MARK: - Color
-struct Generation: Codable {
-    let name: String
-    let url: String
-    var computedId: Int? {
+class Generation: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var name: String = ""
+    @objc dynamic var url: String = ""
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case url
+    }
+    
+    func getComputedId() -> Int? {
         guard let numberString = url.split(separator: "/").last else {
             return nil
         }
@@ -80,98 +93,137 @@ struct Generation: Codable {
         return Int(numberString)
     }
     
-    enum CodingKeys: String, CodingKey {
-        case name
-        case url
+    override class func primaryKey() -> String? {
+        return "localId"
     }
 }
 
 // MARK: - Color
-struct PokemonColor: Codable {
-    let name: String
-    let url: String
-
+class PokemonColor: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var name: String = ""
+    @objc dynamic var url: String = ""
+    
     enum CodingKeys: String, CodingKey {
         case name
         case url
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
 }
 
 // MARK: - EvolutionChain
-struct EvolutionChain: Codable {
-    let url: String
-
+class EvolutionChain: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var url: String = ""
+    
     enum CodingKeys: String, CodingKey {
         case url
+    }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
     }
 }
 
 // MARK: - FlavorTextEntry
-struct FlavorTextEntry: Codable {
-    let flavorText: String
-    let language: PokemonColor
-    let version: PokemonColor
-
+class FlavorTextEntry: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var flavorText: String = ""
+    @objc dynamic var language: PokemonColor?
+    @objc dynamic var version: PokemonColor?
+    
     enum CodingKeys: String, CodingKey {
         case flavorText = "flavor_text"
         case language
         case version
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
 }
 
 // MARK: - Genus
-struct Genus: Codable {
-    let genus: String
-    let language: PokemonColor
-
+class Genus: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var genus: String = ""
+    @objc dynamic var language: PokemonColor?
+    
     enum CodingKeys: String, CodingKey {
         case genus
         case language
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
 }
 
 // MARK: - Name
-struct Name: Codable {
-    let language: PokemonColor
-    let name: String
-
+class Name: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var language: PokemonColor?
+    @objc dynamic var name: String = ""
+    
     enum CodingKeys: String, CodingKey {
         case language
         case name
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
 }
 
 // MARK: - PalParkEncounter
-struct PalParkEncounter: Codable {
-    let area: PokemonColor
-    let baseScore: Int
-    let rate: Int
-
+class PalParkEncounter: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var area: PokemonColor?
+    @objc dynamic var baseScore: Int = 0
+    @objc dynamic var rate: Int
+    
     enum CodingKeys: String, CodingKey {
         case area
         case baseScore = "base_score"
         case rate
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
 }
 
 // MARK: - PokedexNumber
-struct PokedexNumber: Codable {
-    let entryNumber: Int
-    let pokedex: PokemonColor
-
+class PokedexNumber: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var entryNumber: Int = 0
+    @objc dynamic var pokedex: PokemonColor?
+    
     enum CodingKeys: String, CodingKey {
         case entryNumber = "entry_number"
         case pokedex
     }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
+    }
 }
 
 // MARK: - Variety
-struct Variety: Codable {
-    let isDefault: Bool
-    let pokemon: PokemonColor
-
+class Variety: Object, Codable {
+    @objc dynamic var localId = UUID().uuidString
+    @objc dynamic var isDefault: Bool = false
+    @objc dynamic var pokemon: PokemonColor?
+    
     enum CodingKeys: String, CodingKey {
         case isDefault = "is_default"
         case pokemon
+    }
+    
+    override class func primaryKey() -> String? {
+        return "localId"
     }
 }
