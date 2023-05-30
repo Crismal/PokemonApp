@@ -8,26 +8,19 @@
 import Foundation
 import RealmSwift
 
-// MARK: - Welcome
-class PokemonResult: Object, Codable {
-    @objc dynamic var id = UUID().uuidString
-    @objc dynamic var count: Int = 0
-    @objc dynamic var next: String = ""
-    var pokemons = List<Pokemon>()
+class PokemonResult: Codable {
+    var id = UUID().uuidString
+    var count: Int = 0
+    var next: String = ""
+    var pokemons = [Pokemon]()
     
     enum CodingKeys: String, CodingKey {
         case count
         case next
         case pokemons = "results"
     }
-    
-    override class func primaryKey() -> String? {
-        return "id"
-    }
-    
 }
 
-// MARK: - Result
 class Pokemon: Object, Codable, Identifiable {
     @objc dynamic var id = UUID().uuidString
     @objc dynamic var name: String = ""
@@ -49,4 +42,5 @@ class Pokemon: Object, Codable, Identifiable {
         
         return Int(numberString)
     }
+    
 }

@@ -11,22 +11,26 @@ class MainScreenViewModel: ObservableObject {
     
     private let dataManager = DataManager.shared
     private let keychainManager: KeychainManager
-    private var pokemonResult: PokemonResult?
+    private var pokemons: [Pokemon] = []
     @Published var pokemonDetail: [PokemonDetail] = []
     @Published var pokemonSpecie: [PokemonSpecie] = []
     @Published var pokemonGeneration: [PokemonGeneration] = []
+    @Published var isLoading = false
+    var generations = [Generation]()
+    var isSearching = false
     
     init() {
         keychainManager = KeychainManager()
     }
     
     func getPokemons() {
-        dataManager.getPokemons() { [weak self] (result: Result<PokemonResult, Error>) in
+        isLoading = true
+        dataManager.getPokemons() { [weak self] (result: Result<[Pokemon], Error>) in
             guard let self = self else { return }
             switch result {
             case .success(let success):
                 DispatchQueue.main.async {
-                    self.pokemonResult = success
+                    self.pokemons.append(contentsOf: success.sorted{ $0.getComputedId() ?? 0 < $1.getComputedId() ?? 0 })
                     self.getDetails()
                 }
             case .failure(let failure):
@@ -36,7 +40,6 @@ class MainScreenViewModel: ObservableObject {
     }
     
     private func getDetails() {
-        guard let pokemons = pokemonResult?.pokemons else { return }
         for pokemon in pokemons {
             if let id = pokemon.getComputedId() {
                 if !pokemonDetail.contains(where: { $0.id == id }) {
@@ -56,6 +59,7 @@ class MainScreenViewModel: ObservableObject {
             case .success(let success):
                 DispatchQueue.main.async {
                     self.pokemonDetail.append(success)
+                    self.pokemonDetail = self.pokemonDetail.sorted { $0.id < $1.id}
                 }
             case .failure(let failure):
                 print(failure)
@@ -87,13 +91,14 @@ class MainScreenViewModel: ObservableObject {
             }
         }
     }
-    
+
     func getPokemonGeneration(generationId: Int) {
         dataManager.getPokemonGeneration(generationId: generationId) { [weak self] (result: Result<PokemonGeneration, Error>) in
             guard let self = self else { return }
             switch result {
             case .success(let success):
                 DispatchQueue.main.async {
+                    self.isLoading = false
                     self.pokemonGeneration.append(success)
                 }
             case .failure(let failure):
@@ -102,10 +107,59 @@ class MainScreenViewModel: ObservableObject {
         }
     }
     
+    func getMorePokemons() {
+        let offset = pokemons.count
+        dataManager.getMorePokemons(offset: offset) { [weak self] (result: Result<[Pokemon], Error>) in
+            guard let self = self else { return }
+            switch result {
+            case .success(let success):
+                DispatchQueue.main.async {
+                    self.pokemons.append(contentsOf: success.sorted{ $0.getComputedId() ?? 0 < $1.getComputedId() ?? 0 })
+                    self.getDetails()
+                }
+            case .failure(let failure):
+                print(failure)
+            }
+        }
+    }
+    
+    func loadMoreData(currentPokemon: PokemonDetail) {
+        guard let lastPokemon = pokemonDetail.last, !isSearching else { return }
+        
+        if lastPokemon == currentPokemon {
+            getMorePokemons()
+        }
+    }
+    
+    func seachPokemon(searchText: String) {
+        if searchText.isEmpty {
+            isSearching = false
+            getPokemons()
+            isLoading = false
+        } else {
+            isSearching = true
+            pokemons = []
+            pokemonDetail = []
+            dataManager.searchPokemons(searchText: searchText) { [weak self] (result : Result<[Pokemon], Error>) in
+                guard let self = self else { return }
+                switch result {
+                case .success(let success):
+                    DispatchQueue.main.async {
+                        self.isLoading = false
+                        self.pokemons = success
+                        self.getDetails()
+                    }
+                case .failure(let failure):
+                    print(failure)
+                }
+            }
+        }
+        
+    }
+    
     func getPokemonDetailFromList(pokemonId: Int) -> PokemonDetail? {
         return pokemonDetail.first(where: { $0.id == pokemonId })
     }
-    
     
     func getPokemonSpecie(pokemonId: Int) -> PokemonSpecie? {
         return pokemonSpecie.first(where: { $0.id == pokemonId })

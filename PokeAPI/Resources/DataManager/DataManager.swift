@@ -25,22 +25,52 @@ class DataManager {
         }
     }
     
-    func getPokemons(_ completion: @escaping (Result<PokemonResult, Error>) -> Void) {
-        if let pokemons = realm.getAllObjects(PokemonResult.self) {
+    func getPokemons(_ completion: @escaping (Result<[Pokemon], Error>) -> Void) {
+        if let pokemons = realm.getAllObjects(Pokemon.self) {
             if pokemons.isEmpty {
                 service.request(endPoint: "pokemon", method: .get) { (result: Result<PokemonResult, Error>) in
                     switch result {
                     case .success(let success):
-                        self.saveObject(object: success)
-                        completion(.success(success))
+                        self.saveObjects(object: success.pokemons)
+                        completion(.success(success.pokemons))
                     case .failure(let failure):
                         print(failure)
                         completion(.failure(failure))
                     }
                 }
             } else {
-                completion(.success(pokemons.first!))
+                completion(.success(Array(pokemons)))
             }
+        }
+    }
+    
+    func getMorePokemons(offset: Int,_ completion: @escaping (Result<[Pokemon], Error>) -> Void) {
+        if let pokemons = realm.getAllObjects(Pokemon.self) {
+            let pokemonsArray = Array(pokemons).filter { $0.getComputedId() ?? 0 > offset && $0.getComputedId() ?? 0 <= offset + 20 }
+            if pokemonsArray.isEmpty {
+                service.request(endPoint: "pokemon/?offset=\(offset)&limit=20", method: .get) { (result: Result<PokemonResult, Error>) in
+                    switch result {
+                    case .success(let success):
+                        self.saveObjects(object: success.pokemons)
+                        completion(.success(success.pokemons))
+                    case .failure(let failure):
+                        print(failure)
+                        completion(.failure(failure))
+                    }
+                }
+            } else {
+                completion(.success(pokemonsArray))
+            }
+        }
+    }
+    
+    func searchPokemons(searchText: String,  _ completion: @escaping (Result<[Pokemon], Error>) -> Void) {
+        print(searchText.lowercased())
+//        if let pokemons = realm.getAllObjects(Pokemon.self)?.where( { $0.name.contains(searchText.lowercased()) || $0.id == searchText}) {
+        if let pokemons = realm.getAllObjects(Pokemon.self) {
+            let filteredPokemons = Array(pokemons).filter( { $0.name.contains(searchText.lowercased()) || "\($0.getComputedId() ?? 0)" == searchText})
+            print(filteredPokemons.count)
+            completion(.success(Array(filteredPokemons)))
         }
     }
     
@@ -82,6 +112,7 @@ class DataManager {
         if let pokemonGeneration = realm.getAllObjects(PokemonGeneration.self)?.where( { $0.id == generationId}).first {
             completion(.success(pokemonGeneration))
         } else {
+            print("generation/\(generationId)")
             service.request(endPoint: "generation/\(generationId)", method: .get) { (result: Result<PokemonGeneration, Error>) in
                 switch result {
                 case .success(let success):
@@ -104,6 +135,13 @@ extension DataManager {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.realm.saveObject(object)
+        }
+    }
+    
+    func saveObjects<T: RealmSwift.Object>(object: [T]) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.realm.saveObjects(object)
         }
     }
     

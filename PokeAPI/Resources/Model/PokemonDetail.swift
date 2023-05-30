@@ -23,7 +23,6 @@ class PokemonDetail: Object, Codable, Identifiable {
     var moves = List<Move>()
     @objc dynamic var name: String = ""
     @objc dynamic var order: Int = 0
-    var pastTypes = List<String>()
     @objc dynamic var species: Species?
     @objc dynamic var sprites: Sprites?
     var stats = List<Stat>()
@@ -43,7 +42,6 @@ class PokemonDetail: Object, Codable, Identifiable {
         case moves
         case name
         case order
-        case pastTypes = "past_types"
         case species
         case sprites
         case stats

@@ -49,6 +49,12 @@ class RealmDataManager {
         }
     }
     
+    func saveObjects<T: Object>(_ objects: [T]) {
+        for object in objects {
+            saveObject(object)
+        }
+    }
+    
     // MARK: - Get Data
     
     func getObject<T: Object>(_ objectType: T.Type, primaryKey: String) -> T? {

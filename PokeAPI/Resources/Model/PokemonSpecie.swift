@@ -18,7 +18,6 @@ class PokemonSpecie: Object, Codable {
     @objc dynamic var evolutionChain: EvolutionChain?
     @objc dynamic var evolvesFromSpecies: PokemonColor?
     var flavorTextEntries = List<FlavorTextEntry>()
-    var formDescriptions = List<String>()
     @objc dynamic var formsSwitchable: Bool = false
     @objc dynamic var genderRate: Int = 0
     var genera = List<Genus>()
@@ -47,7 +46,6 @@ class PokemonSpecie: Object, Codable {
         case evolutionChain = "evolution_chain"
         case evolvesFromSpecies = "evolves_from_species"
         case flavorTextEntries = "flavor_text_entries"
-        case formDescriptions = "form_descriptions"
         case formsSwitchable = "forms_switchable"
         case genderRate = "gender_rate"
         case genera
