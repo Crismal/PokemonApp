@@ -79,7 +79,7 @@ struct SettingsView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color("Psychic"))
+                        .background(Color("psychic"))
                         .cornerRadius(10)
                 }
             }

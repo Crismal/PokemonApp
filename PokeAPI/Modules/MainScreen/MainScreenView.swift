@@ -19,7 +19,6 @@ struct MainScreenView: View {
     }
     
     var body: some View {
-        
         NavigationView {
             if viewModel.isLoading {
                 VStack {
@@ -59,7 +58,7 @@ struct MainScreenView: View {
                     HStack {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.gray)
-                        .padding(.leading, 10)
+                            .padding(.leading, 10)
                         TextField("What Pokémon are you looking for?", text: $searchText) { editing in
                             viewModel.seachPokemon(searchText: searchText)
                         }
@@ -95,11 +94,9 @@ struct MainScreenView: View {
                     }
                 }
             }
-            
         }
         .onAppear {
             viewModel.getPokemons()
         }
-       
     }
 }

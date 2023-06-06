@@ -12,6 +12,16 @@ class DataManager {
     static let shared = DataManager()
     private let realm = RealmDataManager()
     private let service = PokeAPIService()
+    private var timer: DispatchSourceTimer?
+    private let queue = DispatchQueue.global(qos: .userInitiated)
+    
+    init() {
+        startTimer()
+    }
+    
+    deinit {
+        stopAPIThreading()
+    }
     
     func getLogin(email: String, password: String, _ completion: @escaping (Result<CurrenUsers, Error>) -> Void) {
         service.requestLogin(endPoint: "", method: .get) { (result: Result<CurrenUsers, Error>) in
@@ -39,16 +49,16 @@ class DataManager {
                     }
                 }
             } else {
-                completion(.success(Array(pokemons)))
+                completion(.success(Array(pokemons.prefix(20))))
             }
         }
     }
     
-    func getMorePokemons(offset: Int,_ completion: @escaping (Result<[Pokemon], Error>) -> Void) {
+    func getMorePokemons(offset: Int, _ completion: @escaping (Result<[Pokemon], Error>) -> Void) {
         if let pokemons = realm.getAllObjects(Pokemon.self) {
-            let pokemonsArray = Array(pokemons).filter { $0.getComputedId() ?? 0 > offset && $0.getComputedId() ?? 0 <= offset + 20 }
+            let pokemonsArray = Array(pokemons).filter { $0.getComputedId() ?? 0 > offset && $0.getComputedId() ?? 0 <= offset + 5 }
             if pokemonsArray.isEmpty {
-                service.request(endPoint: "pokemon/?offset=\(offset)&limit=20", method: .get) { (result: Result<PokemonResult, Error>) in
+                service.request(endPoint: "pokemon/?offset=\(offset)&limit=5", method: .get) { (result: Result<PokemonResult, Error>) in
                     switch result {
                     case .success(let success):
                         self.saveObjects(object: success.pokemons)
@@ -64,12 +74,42 @@ class DataManager {
         }
     }
     
+    private func getDetails(pokemons: [Pokemon]) {
+        for pokemon in pokemons {
+            if let id = pokemon.getComputedId() {
+                getPokemonDetail(pokemonId: id) { _ in }
+                getPokemonSpecies(pokemonId: id)  { _ in }
+            }
+        }
+    }
+    
+    func getPokemonsByThread() {
+        if let pokemons = realm.getAllObjects(Pokemon.self) {
+            let offset = pokemons.count + 1
+            let pokemonsArray = Array(pokemons).filter { $0.getComputedId() ?? 0 > offset && $0.getComputedId() ?? 0 <= offset + 5 }
+            if pokemonsArray.isEmpty {
+                service.request(endPoint: "pokemon/?offset=\(offset)&limit=5", method: .get) { (result: Result<PokemonResult, Error>) in
+                    switch result {
+                    case .success(let success):
+                        if success.next == nil || success.count == 0 {
+                            self.stopAPIThreading()
+                            return
+                        }
+                        self.saveObjects(object: success.pokemons)
+                        self.getDetails(pokemons: success.pokemons)
+                        
+                    case .failure(let failure):
+                        print(failure)
+                        self.stopAPIThreading()
+                    }
+                }
+            }
+        }
+    }
+    
     func searchPokemons(searchText: String,  _ completion: @escaping (Result<[Pokemon], Error>) -> Void) {
-        print(searchText.lowercased())
-//        if let pokemons = realm.getAllObjects(Pokemon.self)?.where( { $0.name.contains(searchText.lowercased()) || $0.id == searchText}) {
         if let pokemons = realm.getAllObjects(Pokemon.self) {
             let filteredPokemons = Array(pokemons).filter( { $0.name.contains(searchText.lowercased()) || "\($0.getComputedId() ?? 0)" == searchText})
-            print(filteredPokemons.count)
             completion(.success(Array(filteredPokemons)))
         }
     }
@@ -112,7 +152,6 @@ class DataManager {
         if let pokemonGeneration = realm.getAllObjects(PokemonGeneration.self)?.where( { $0.id == generationId}).first {
             completion(.success(pokemonGeneration))
         } else {
-            print("generation/\(generationId)")
             service.request(endPoint: "generation/\(generationId)", method: .get) { (result: Result<PokemonGeneration, Error>) in
                 switch result {
                 case .success(let success):
@@ -122,6 +161,19 @@ class DataManager {
                     print(failure)
                     completion(.failure(failure))
                 }
+            }
+        }
+    }
+    
+    func getPokemonEvolution(pokemonId: Int, _ completion: @escaping (Result<PokemonEvolution, Error>) -> Void) {
+        service.request(endPoint: "evolution-chain/\(pokemonId)", method: .get) { (result: Result<PokemonEvolution, Error>) in
+            switch result {
+            case .success(let success):
+                print(success)
+                completion(.success(success))
+            case .failure(let failure):
+                print(failure)
+                completion(.failure(failure))
             }
         }
     }
@@ -143,6 +195,24 @@ extension DataManager {
             guard let self = self else { return }
             self.realm.saveObjects(object)
         }
+    }
+    
+}
+
+extension DataManager {
+    
+    private func startTimer() {
+        timer = DispatchSource.makeTimerSource(queue: queue)
+        timer?.schedule(deadline: .now(), repeating: .seconds(5))
+        timer?.setEventHandler { [weak self] in
+            self?.getPokemonsByThread()
+        }
+        timer?.resume()
+    }
+    
+    private func stopAPIThreading() {
+        timer?.cancel()
+        timer = nil
     }
     
 }

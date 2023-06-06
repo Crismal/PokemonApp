@@ -10,7 +10,6 @@ import RealmSwift
 
 // MARK: - PokemonGeneration
 class PokemonGeneration: Object, Codable {
-    @objc dynamic var localId: String = UUID().uuidString
     var abilities = List<PokemonColor>()
     @objc dynamic var id: Int = 0
     @objc dynamic var mainRegion: PokemonColor?
@@ -34,13 +33,12 @@ class PokemonGeneration: Object, Codable {
     }
     
     override class func primaryKey() -> String? {
-        return "localId"
+        return "name"
     }
 }
 
 // MARK: - Name
 class GenerationName: Object, Codable {
-    @objc dynamic var localId: String = UUID().uuidString
     @objc dynamic var language: PokemonColor?
     @objc dynamic var name: String = ""
 
@@ -50,6 +48,6 @@ class GenerationName: Object, Codable {
     }
     
     override class func primaryKey() -> String? {
-        return "localId"
+        return "name"
     }
 }

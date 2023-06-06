@@ -14,8 +14,8 @@ struct PokemonDetailView: View {
     @State var showEvolution = false
     var pokemonDetail: PokemonDetail
     var pokemonSpecie: PokemonSpecie?
+    @ObservedObject var viewModel = PokemonDetailViewModel()
     
-    let imageURL = URL(string: "https://example.com/image.jpg")!
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -108,7 +108,7 @@ struct PokemonDetailView: View {
                         
                         if showEvolution {
                             VStack(spacing: 20) {
-                                EvolutionChartView()
+                                EvolutionChartView(pokemonDetail: pokemonDetail, viewModel: viewModel)
                             }
                             .padding([.top, .bottom, .horizontal], 40)
                             .background(Color.white)

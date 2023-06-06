@@ -41,7 +41,9 @@ class RealmDataManager {
         
         do {
             try realm.write {
-                realm.add(object, update: .modified)
+                realm.writeAsync {
+                    realm.add(object, update: .modified)
+                }
             }
         } catch {
             // Handle error

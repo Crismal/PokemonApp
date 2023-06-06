@@ -30,7 +30,7 @@ class MainScreenViewModel: ObservableObject {
             switch result {
             case .success(let success):
                 DispatchQueue.main.async {
-                    self.pokemons.append(contentsOf: success.sorted{ $0.getComputedId() ?? 0 < $1.getComputedId() ?? 0 })
+                    self.pokemons = success.sorted{ $0.getComputedId() ?? 0 < $1.getComputedId() ?? 0 }
                     self.getDetails()
                 }
             case .failure(let failure):
@@ -98,13 +98,13 @@ class MainScreenViewModel: ObservableObject {
             switch result {
             case .success(let success):
                 DispatchQueue.main.async {
-                    self.isLoading = false
                     self.pokemonGeneration.append(success)
                 }
             case .failure(let failure):
                 print(failure)
             }
         }
+        self.isLoading = false
     }
     
     func getMorePokemons() {

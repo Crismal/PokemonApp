@@ -165,13 +165,13 @@ class VersionGroupDetail: Object, Codable, Identifiable {
 // MARK: - Sprites
 class Sprites: Object, Codable, Identifiable {
     @objc dynamic var id = UUID().uuidString
-    @objc dynamic var backDefault: String = ""
+    @objc dynamic var backDefault: String? = ""
     @objc dynamic var backFemale: String? = ""
-    @objc dynamic var backShiny: String = ""
+    @objc dynamic var backShiny: String? = ""
     @objc dynamic var backShinyFemale: String? = ""
-    @objc dynamic var frontDefault: String = ""
+    @objc dynamic var frontDefault: String? = ""
     @objc dynamic var frontFemale: String? = ""
-    @objc dynamic var frontShiny: String = ""
+    @objc dynamic var frontShiny: String? = ""
     @objc dynamic var frontShinyFemale: String? = ""
     @objc dynamic var other: Other?
 
@@ -211,7 +211,7 @@ class Other: Object, Codable {
 // MARK: - DreamWorld
 class DreamWorld: Object, Codable {
     @objc dynamic var id = UUID().uuidString
-    @objc dynamic var frontDefault: String = ""
+    @objc dynamic var frontDefault: String? = ""
     @objc dynamic var frontFemale: String? = ""
 
     enum CodingKeys: String, CodingKey {
@@ -227,8 +227,8 @@ class DreamWorld: Object, Codable {
 // MARK: - OfficialArtwork
 class OfficialArtwork: Object, Codable {
     @objc dynamic var id = UUID().uuidString
-    @objc dynamic var frontDefault: String = ""
-    @objc dynamic var frontShiny: String = ""
+    @objc dynamic var frontDefault: String? = ""
+    @objc dynamic var frontShiny: String? = ""
 
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"

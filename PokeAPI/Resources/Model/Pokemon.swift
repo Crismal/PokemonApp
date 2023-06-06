@@ -11,7 +11,7 @@ import RealmSwift
 class PokemonResult: Codable {
     var id = UUID().uuidString
     var count: Int = 0
-    var next: String = ""
+    var next: String? = ""
     var pokemons = [Pokemon]()
     
     enum CodingKeys: String, CodingKey {
@@ -22,7 +22,6 @@ class PokemonResult: Codable {
 }
 
 class Pokemon: Object, Codable, Identifiable {
-    @objc dynamic var id = UUID().uuidString
     @objc dynamic var name: String = ""
     @objc dynamic var url: String = ""
     
@@ -32,7 +31,7 @@ class Pokemon: Object, Codable, Identifiable {
     }
     
     override class func primaryKey() -> String? {
-        return "id"
+        return "name"
     }
     
     func getComputedId() -> Int? {
